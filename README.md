@@ -20,10 +20,14 @@ npm run preview
 
 ## GitHub Pages
 
-После пуша в `master`/`main` Action собирает сайт.
-Ссылка: `https://<username>.github.io/homyak-quest/`
+Сайт: https://taa08.github.io/homyak-quest/
 
-В настройках репозитория: **Settings → Pages → Source: GitHub Actions**.
+Обновление после правок:
+
+```bash
+npm run build
+npx gh-pages -d dist -b gh-pages
+```
 
 ## Кампания
 

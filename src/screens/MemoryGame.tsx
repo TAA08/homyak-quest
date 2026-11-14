@@ -4,9 +4,18 @@ import { MissionHeader } from '../components/MissionHeader'
 import { getStation } from '../data/content'
 import { useProgress } from '../state/progress'
 
-const EMOJIS = ['🌻', '💛', '🐹', '🎂', '⭐', '🍓']
+const PAIR_IMAGES = [
+  '/memory/lion.png',
+  '/memory/squirrel.png',
+  '/memory/fox.png',
+  '/memory/husky.png',
+  '/memory/nu-moya.png',
+  '/memory/patrick.png',
+  '/memory/zayka.png',
+  '/memory/dog.png',
+]
 
-type Card = { id: number; emoji: string; key: string }
+type Card = { id: number; src: string; key: string }
 
 function shuffle<T>(arr: T[]) {
   const a = [...arr]
@@ -17,12 +26,18 @@ function shuffle<T>(arr: T[]) {
   return a
 }
 
+function withBase(path: string) {
+  const base = import.meta.env.BASE_URL || '/'
+  if (path.startsWith('http')) return path
+  return `${base}${path.replace(/^\//, '')}`
+}
+
 export function MemoryGame({ onBack }: { onBack: () => void }) {
   const { markDone, setMemoryBest, memoryBestMs } = useProgress()
   const deck = useMemo(() => {
-    const pairs = EMOJIS.flatMap((emoji, i) => [
-      { id: i * 2, emoji, key: emoji },
-      { id: i * 2 + 1, emoji, key: emoji },
+    const pairs = PAIR_IMAGES.flatMap((src, i) => [
+      { id: i * 2, src, key: src },
+      { id: i * 2 + 1, src, key: src },
     ])
     return shuffle(pairs)
   }, [])
@@ -49,7 +64,7 @@ export function MemoryGame({ onBack }: { onBack: () => void }) {
       if (ca.key === cb.key) {
         const nextMatched = [...matched, ca.key]
         setMatched(nextMatched)
-        if (nextMatched.length === EMOJIS.length) {
+        if (nextMatched.length === PAIR_IMAGES.length) {
           const ms = Date.now() - startedAt
           setDoneMs(ms)
           setMemoryBest(ms)
@@ -67,7 +82,7 @@ export function MemoryGame({ onBack }: { onBack: () => void }) {
         <button type="button" className="ghost-btn" onClick={onBack}>
           ← карта
         </button>
-        <span className="brand">Найди пару</span>
+        <span className="brand">Кристальный архив</span>
         <span />
       </div>
 
@@ -91,9 +106,13 @@ export function MemoryGame({ onBack }: { onBack: () => void }) {
                 type="button"
                 className={`memory-card ${isUp ? 'flipped' : ''} ${matched.includes(c.key) ? 'matched' : ''}`}
                 onClick={() => onFlip(c.id, c.key)}
-                aria-label={isUp ? c.emoji : 'закрытая карта'}
+                aria-label={isUp ? 'открытая карта' : 'закрытая карта'}
               >
-                {isUp ? c.emoji : '❔'}
+                {isUp ? (
+                  <img src={withBase(c.src)} alt="" className="memory-face" />
+                ) : (
+                  <span className="memory-back">✦</span>
+                )}
               </button>
             )
           })}
@@ -102,7 +121,7 @@ export function MemoryGame({ onBack }: { onBack: () => void }) {
         {doneMs != null && (
           <>
             <p className="hint" style={{ textAlign: 'center' }}>
-              Ура! За {(doneMs / 1000).toFixed(1)} секунд. Станция пройдена.
+              Все пары найдены за {(doneMs / 1000).toFixed(1)}с. Архив расшифрован!
             </p>
             <div className="actions">
               <button type="button" className="primary-btn" onClick={onBack}>

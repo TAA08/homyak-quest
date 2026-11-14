@@ -2,4 +2,4 @@
  * Стадия разработки: можно проходить уровни без набора очков.
  * Перед подарком поставь false.
  */
-export const DEV_MODE = true
+export const DEV_MODE = false
