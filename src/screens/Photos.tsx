@@ -3,6 +3,12 @@ import { MissionHeader } from '../components/MissionHeader'
 import { getStation, photos } from '../data/content'
 import { useProgress } from '../state/progress'
 
+function withBase(path: string) {
+  const base = import.meta.env.BASE_URL || '/'
+  if (path.startsWith('http')) return path
+  return `${base}${path.replace(/^\//, '')}`
+}
+
 export function Photos({ onBack }: { onBack: () => void }) {
   const { markDone } = useProgress()
 
@@ -16,7 +22,7 @@ export function Photos({ onBack }: { onBack: () => void }) {
         <button type="button" className="ghost-btn" onClick={onBack}>
           ← карта
         </button>
-        <span className="brand">Наши кадры</span>
+        <span className="brand">Голограммы</span>
         <span />
       </div>
 
@@ -29,7 +35,7 @@ export function Photos({ onBack }: { onBack: () => void }) {
         <div className="photo-grid">
           {photos.map((p) => (
             <figure key={p.src} className="photo-card">
-              <img src={p.src} alt={p.caption} loading="lazy" />
+              <img src={withBase(p.src)} alt={p.caption} loading="lazy" />
               <figcaption>{p.caption}</figcaption>
             </figure>
           ))}
